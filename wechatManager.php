@@ -63,7 +63,6 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
 			global $wm_welcome;
 			$object->addNews($wm_welcome,"","","");
 			$object->addNews(WM_MESSAGE,"","","");
-			$object->addNews('微信贺卡，请点击此链接',"","http://9iphp.com/card/","http://specsimgs.sinaapp.com/images/blog-9iphp/icon_card.jpg");
 			$object->sendNews();
 			break;
 		case "unsubscribe": //当用户取消关注
@@ -99,18 +98,10 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
 					global $wm_welcome;
 					$object->addNews($wm_welcome,"","","");
 					$object->addNews(WM_MESSAGE,"","","");
-					$object->addNews('微信贺卡，请点击此链接',"","http://9iphp.com/card/","http://specsimgs.sinaapp.com/images/blog-9iphp/icon_card.jpg");
-					$object->sendNews();
-					break;
-				case 'C':
-				case 'c':
-				case '贺卡':
-					$object->addNews('微信贺卡',"定制自己的贺卡发送给亲朋好友，目前包含新年/元宵/情人节三类\n\n点击图文开始制作吧!","http://9iphp.com/card/","http://specsimgs.sinaapp.com/images/blog-9iphp/weixin-card.jpg");
 					$object->sendNews();
 					break;
 				default:
 					switchFunc($object, $keyword);
-					//$object->sendText("暂无相关内容，你可以到我们的<a href='http://wx.wsq.qq.com/177325859'>微社区</a>提交相关问题"); //否则，显示出错信息
 					break;
 			}
 			break;
@@ -143,7 +134,7 @@ function switchFunc(WeChat $object, $keyword){
 		case "搜索":
 			$articles = query("", $value);
 			if(empty($articles)){
-				$object->sendText("没有找到香港文章");
+				$object->sendText("没有找到相关文章");
 			}else{
 				foreach($articles as $v){
 					$object->addNews($v['0'],$v['1'],$v['2'],$v['3']);
@@ -154,7 +145,6 @@ function switchFunc(WeChat $object, $keyword){
 		default:
 			$object->addNews(WM_ERROR_MESSAGE,"","","");
 			$object->addNews(WM_MESSAGE,"","","");
-			$object->addNews('微信贺卡，请点击此链接',"","http://9iphp.com/card/","http://specsimgs.sinaapp.com/images/blog-9iphp/icon_card.jpg");
 			$object->sendNews();
 			break;
 	}
