@@ -119,10 +119,10 @@ function wm_translate($q){
 
 	$salt = rand(1, 999);
 	$sign = md5($wm_translate_appid . $q . $salt . $wm_translate_key);
-	$url = 'http://api.fanyi.baidu.com/api/trans/vip/translate?q=' . $q . '&appid=' . $wm_translate_appid . '&salt=' . $salt . '&from=zh&to=en&sign=' . $sign;
+	$url = 'http://api.fanyi.baidu.com/api/trans/vip/translate?q=' . $q . '&appid=' . $wm_translate_appid . '&salt=' . $salt . '&from=auto&to=auto&sign=' . $sign;
 	$result = json_decode(file_get_contents($url), true);
 	$dst = $result['trans_result'][0]['dst'];
-	return $dst ? strtolower($dst) : false;
+	return $dst ? $dst : false;
 }
 //天气查询
 function wm_weather($city){
