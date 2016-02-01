@@ -22,27 +22,61 @@ if(!function_exists('get_post_first_image')){
 	}
 }
 // 判断当前用户操作是否在微信内置浏览器中
-function is_weixin(){
-	if ( isset($_SERVER['HTTP_USER_AGENT']) ) {
-		if ( strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') !== false ) {
-			return true;
+if(!function_exists('is_weixin')){
+	function is_weixin(){
+		if ( isset($_SERVER['HTTP_USER_AGENT']) ) {
+			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') !== false ) {
+				return true;
+			}
 		}
+		return false;
 	}
-	return false;
 }
 //获取博客文章
-function query($q, $s=""){
+function wm_query_posts($q, $s=""){
 	global $wp_query;
-	global $wm_post_nums;
 	$articles = array();
 	$query_base= array(
 		'ignore_sticky_posts'	=> true,
-		'posts_per_page'		=> $wm_post_nums,
+		'posts_per_page'		=> POSTNUM,
 		'post_status'			=> 'publish',
 	);
 	if(empty($s)){
 		switch($q){
-			case "h":
+			case "c7":
+				$query_more = array(
+					"order"	=> "DESC",
+					"orderby" => "comment_count",
+					'date_query' => array(
+						array(
+							'after'  => '1 week ago',
+						),
+					),
+				);
+				break;
+			case "c30":
+				$query_more = array(
+					"order"	=> "DESC",
+					"orderby" => "comment_count",
+					'date_query' => array(
+						array(
+							'after'  => '1 month ago',
+						),
+					),
+				);
+				break;
+			case "c365":
+				$query_more = array(
+					"order"	=> "DESC",
+					"orderby" => "comment_count",
+					'date_query' => array(
+						array(
+							'after'  => '1 year ago',
+						),
+					),
+				);
+				break;
+			case "c":
 				$query_more = array(
 					"order"	=> "DESC",
 					"orderby" => "comment_count",
@@ -82,7 +116,7 @@ function query($q, $s=""){
 
 			$thumbnail_id = get_post_thumbnail_id($post->ID);
 			if($thumbnail_id ){
-				$thumb = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
+				$thumb = wp_get_attachment_image_src($thumbnail_id, 'full');
 				$thumb = $thumb[0];
 			}else{
 				$thumb = get_post_first_image($post->post_content);
@@ -97,6 +131,19 @@ function query($q, $s=""){
 	}
 	return $articles;
 }
+
+function send_post($object, $type='', $value='')
+{
+	$articles = wm_query_posts($type, $value);
+	if (empty($articles)) {
+		$object->sendText("暂无相关文章");
+	}
+    foreach($articles as $v){
+        $object->addNews($v['0'],$v['1'],$v['2'],$v['3']);
+    }
+    $object->sendNews();
+}
+
 //英汉互译
 function wm_translate($q){
 	/*global $wm_bdak;
@@ -145,9 +192,55 @@ function wm_weather($city){
 		$temp = $result[$i]->temperature;
 		$array[$i]['title'] = $date." 天气:".$weather." 温度:".$temp." 风力:".$wind;
 		if($i == 0){
-			$array[$i]['pic'] = WECHAT_MANAGER_STATIC."/imgs/weather.jpg";
+			$array[$i]['pic'] = WECHAT_MANAGER_STATIC."/include/weather.jpg";
 			$array[$i]['title'] = $city." ".$array[$i]['title'];
 		}
 	}
 	return $array;
+}
+
+
+function wm_get_setting($opt)
+{
+	$options = wm_get_options();
+	return $options[$opt] ? $options[$opt] : null;
+}
+
+function wm_get_options()
+{
+	if (!$options = wp_cache_get('options_setting', 'wm_options')) {
+		$options = get_option( 'wm_options' );
+		wp_cache_add( 'options_setting', $options, 'wm_options' );
+	}
+	return $options;
+}
+
+function wm_get_access_token(){
+
+	if(wm_get_setting('appid') && wm_get_setting('appsecret')){
+
+		$wm_access_token = get_transient('wm_access_token');
+
+		if($wm_access_token === false){
+			$url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.wm_get_setting('appid').'&secret='.wm_get_setting('appsecret');
+			$wm_access_token = wp_remote_get($url,array('sslverify'=>false));
+			if(is_wp_error($wm_access_token)){
+				echo '<div class="wrap"><div class="updated"><p>'.$wm_access_token->get_error_code().'：'. $wm_access_token->get_error_message().'</p></div></div>';
+				exit;
+			}
+			$wm_access_token = json_decode($wm_access_token['body'],true);
+			if(isset($wm_access_token['access_token'])){
+				set_transient('wm_access_token',$wm_access_token['access_token'],$wm_access_token['expires_in']);
+				return $wm_access_token['access_token'];
+			}else{
+				echo '<div class="wrap"><div class="updated"><p>错误代码：'.$wm_access_token['errcode'].'，信息：'.$wm_access_token['errmsg'].'</p></div></div>';
+				return;
+			}
+		}else{
+			return $wm_access_token;
+		}
+	}else{
+		echo '<div class="wrap"><div class="updated"><p>请先设置 AppID 与 AppSecret</p></div></div>';
+		return;
+	}
 }

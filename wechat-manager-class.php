@@ -137,7 +137,7 @@ class WeChat{
 						call_user_func($this->callback_function, $this, "unsubscribe", $object->FromUserName, "", "");
 						break;
 					case "CLICK":      //菜单点击事件
-						call_user_func($this->callback_function, $this, "click", $object->EventKey, "", "");
+						call_user_func($this->callback_function, $this, "text", $object->EventKey, "", "");
 						break;
 					default :
 						//Unknow Event
