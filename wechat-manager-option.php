@@ -146,7 +146,7 @@ function wechat_manager_optionpage(){
                                 <input id="appsecret" class="regular-text" type="text" name="wm_options[appsecret]" value="<?php esc_attr_e( $options['appsecret'] ); ?>" />
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th>贺卡</th>
                             <td>
                                 <input id="card" class="regular-text" type="text" name="wm_options[card]" value="<?php esc_attr_e( $options['card'] ); ?>" />
@@ -172,7 +172,7 @@ function wechat_manager_optionpage(){
                                 <input id="bd_key" class="regular-text" type="text" name="wm_options[bd_key]" value="<?php esc_attr_e( $options['bd_key'] ); ?>" />
                                 <p class="description">用于天气查询，申请地址<a href="http://lbsyun.baidu.com/apiconsole/key?application=key" target="_blank">百度地图密钥</a>，其中“应用类型”应选择“服务端”(留空则不启用)</p>
                             </td>
-                        </tr>
+                        </tr> -->
                         <!-- <tr>
                             <th>是否已获得高级接口权限</th>
                             <td>
