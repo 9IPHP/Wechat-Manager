@@ -44,6 +44,7 @@ function wechat_manager_optionpage(){
             <div class="wm-logo"></div>
             <h1>Wechat Manager 设置</h1>
             <p style="color:red">以下设置中，文章关键词若为英文，请使用小写形式</p>
+            <p>帮助信息的关键词为：help,h,?,？ 用户输入四个中任意一个都会返回帮助信息</p>
         </div>
         <div class="wm-option-main">
             <form name="wm-options" method="post" action="options.php">
@@ -65,7 +66,7 @@ function wechat_manager_optionpage(){
                             </td>
                         </tr>
                         <tr>
-                            <th>欢迎信息</th>
+                            <th>欢迎/帮助信息</th>
                             <td>
                                 <textarea id="welcome" class="large-text" cols="30" rows="8" name="wm_options[welcome]"><?php echo $options['welcome'] ? esc_textarea( $options['welcome'] ) : $default['welcome'] ; ?></textarea>
                                 <p class="description">当用户订阅及输入帮助信息时的回复</p>
@@ -74,55 +75,55 @@ function wechat_manager_optionpage(){
                         <tr>
                             <th>无匹配结果的回复</th>
                             <td>
-                                <input id="no_post" class="regular-text" type="text" name="wm_options[no_post]" value="<?php echo $options['no_post'] ? esc_attr( $options['no_post'] ) : $default['no_post']; ?>" />
+                                <input id="no_post" class="regular-text" type="text" name="wm_options[no_post]" value="<?php echo esc_attr( $options['no_post'] ); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th>文章返回最大数</th>
                             <td>
-                                <input id="post_num" class="regular-text" type="text" name="wm_options[post_num]" value="<?php echo $options['post_num'] ? esc_attr( $options['post_num'] ) : $default['post_num']; ?>" />
+                                <input id="post_num" class="regular-text" type="text" name="wm_options[post_num]" value="<?php echo esc_attr( $options['post_num'] ); ?>" placeholder="6"/>
                                 <p class="description">返回文章个数(最多为 10 个)</p>
                             </td>
                         </tr>
                         <tr>
                             <th>最新文章关键词</th>
                             <td>
-                                <input id="post_new" class="regular-text" type="text" name="wm_options[post_new]" value="<?php echo $options['post_new'] ? esc_attr( $options['post_new'] ) : $default['post_new']; ?>" />
+                                <input id="post_new" class="regular-text" type="text" name="wm_options[post_new]" value="<?php echo esc_attr( $options['post_new'] ); ?>"  placeholder="n"/>
                                 <p class="description">返回最新文章的关键词</p>
                             </td>
                         </tr>
                         <tr>
                             <th>随机文章关键词</th>
                             <td>
-                                <input id="post_rand" class="regular-text" type="text" name="wm_options[post_rand]" value="<?php esc_attr_e( $options['post_rand'] ); ?>" />
+                                <input id="post_rand" class="regular-text" type="text" name="wm_options[post_rand]" value="<?php esc_attr_e( $options['post_rand'] ); ?>"  placeholder="r"/>
                                 <p class="description">随机返回文章的关键词(建议不启用，因为比较消耗资源)(留空则不启用)</p>
                             </td>
                         </tr>
                         <tr>
                             <th>一周内热门文章关键词</th>
                             <td>
-                                <input id="post_comment_week" class="regular-text" type="text" name="wm_options[post_comment_week]" value="<?php echo $options['post_comment_week'] ? esc_attr( $options['post_comment_week'] ) : $default['post_comment_week']; ?>" />
+                                <input id="post_comment_week" class="regular-text" type="text" name="wm_options[post_comment_week]" value="<?php echo esc_attr( $options['post_comment_week'] ); ?>"  placeholder="c7"/>
                                 <p class="description">返回一周内发布文章中评论最多的关键词</p>
                             </td>
                         </tr>
                         <tr>
                             <th>一月内热门文章关键词</th>
                             <td>
-                                <input id="post_comment_month" class="regular-text" type="text" name="wm_options[post_comment_month]" value="<?php echo $options['post_comment_month'] ? esc_attr( $options['post_comment_month'] ) : $default['post_comment_month']; ?>" />
+                                <input id="post_comment_month" class="regular-text" type="text" name="wm_options[post_comment_month]" value="<?php echo esc_attr( $options['post_comment_month'] ); ?>"  placeholder="c30"/>
                                 <p class="description">返回一月内发布文章中评论最多的关键词</p>
                             </td>
                         </tr>
                         <tr>
                             <th>一年内热门文章关键词</th>
                             <td>
-                                <input id="post_comment_year" class="regular-text" type="text" name="wm_options[post_comment_year]" value="<?php echo $options['post_comment_year'] ? esc_attr( $options['post_comment_year'] ) : $default['post_comment_year']; ?>" />
+                                <input id="post_comment_year" class="regular-text" type="text" name="wm_options[post_comment_year]" value="<?php echo esc_attr( $options['post_comment_year'] ); ?>"  placeholder="c365"/>
                                 <p class="description">返回一年内发布文章中评论最多的关键词</p>
                             </td>
                         </tr>
                         <tr>
                             <th>所有文章热门文章关键词</th>
                             <td>
-                                <input id="post_comment_all" class="regular-text" type="text" name="wm_options[post_comment_all]" value="<?php echo $options['post_comment_all'] ? esc_attr( $options['post_comment_all'] ) : $default['post_comment_all']; ?>" />
+                                <input id="post_comment_all" class="regular-text" type="text" name="wm_options[post_comment_all]" value="<?php echo esc_attr( $options['post_comment_all'] ); ?>"  placeholder="c"/>
                                 <p class="description">返回所有文章中评论最多的关键词</p>
                             </td>
                         </tr>
