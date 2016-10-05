@@ -165,7 +165,13 @@ function wm_query_posts_by_ids($ids) {
             $title =get_the_title();
             $excerpt = get_post_excerpt($post);
 
-            $thumb = get_post_meta($post->ID, 'fmimg_value', 'true');
+            $thumbnail_id = get_post_thumbnail_id($post->ID);
+            if($thumbnail_id ){
+                $thumb = wp_get_attachment_image_src($thumbnail_id, 'full');
+                $thumb = $thumb[0];
+            }else{
+                $thumb = get_post_first_image($post->post_content);
+            }
             global $wm_thumb;
             if(empty($thumb) && !empty($wm_thumb)){
                 $thumb = $wm_thumb;
