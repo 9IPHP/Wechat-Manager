@@ -99,7 +99,6 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
 }
 
 function switchFunc(WeChat $object, $keyword){
-
     global $wpdb;
     //关键词回复
     $cacheKey = 'wechat-manager-custom-reply-key';
@@ -145,7 +144,6 @@ function switchFunc(WeChat $object, $keyword){
             break;
         default:
             send_post($object, '', $key);
-            // $object->sendText(wm_get_setting('no_post'));
             break;
     }
 }
