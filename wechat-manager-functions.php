@@ -144,6 +144,51 @@ function send_post($object, $type='', $value='')
     $object->sendNews();
 }
 
+function wm_query_posts_by_ids($ids) {
+    global $wp_query;
+    $articles = array();
+    $query_base= array(
+        'ignore_sticky_posts'	=> true,
+        'posts_per_page'		=> POSTNUM,
+        'post_status'			=> 'publish',
+    );
+    $idArr = explode(',', $ids);
+    $query_base['post__in'] = $idArr;
+    $weixin_query_array = apply_filters('weixin_query',$query_base);
+    $wp_query->query($weixin_query_array);
+    if(have_posts()){
+        while (have_posts()) {
+            the_post();
+
+            global $post;
+
+            $title =get_the_title();
+            $excerpt = get_post_excerpt($post);
+
+            $thumb = get_post_meta($post->ID, 'fmimg_value', 'true');
+            global $wm_thumb;
+            if(empty($thumb) && !empty($wm_thumb)){
+                $thumb = $wm_thumb;
+            }
+            $link = get_permalink();
+            $articles[] = array($title,$excerpt,$link,$thumb);
+        }
+    }
+    return $articles;
+}
+
+function send_post_by_ids($object, $ids)
+{
+    $articles = wm_query_posts_by_ids($ids);
+    if (empty($articles)) {
+        $object->sendText("暂无相关文章");
+    }
+    foreach($articles as $v){
+        $object->addNews($v['0'],$v['1'],$v['2'],$v['3']);
+    }
+    $object->sendNews();
+}
+
 //英汉互译
 function wm_translate($q){
 	/*global $wm_bdak;

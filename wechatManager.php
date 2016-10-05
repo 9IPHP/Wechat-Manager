@@ -3,7 +3,7 @@
 Plugin Name: Wechat Manager 微信公众平台管家
 Plugin URI: http://9iphp.com/opensystem/wordpress/1043.html
 Description: 通过简单配置，可在微信中获得博客的最新文章、热点文章，实现搜索功能，并且添加了天气查询与英汉互译两个小工具，后续会根据需求添加更多小工具
-Version: 2.0
+Version: 2.1
 Author: Specs
 Author URI: http://9iphp.com
 */
@@ -99,6 +99,30 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
 }
 
 function switchFunc(WeChat $object, $keyword){
+
+    global $wpdb;
+    //关键词回复
+    $cacheKey = 'wechat-manager-custom-reply-key';
+    if (!$cacheVal = wp_cache_get($cacheKey)) {
+        $message_table = $wpdb->prefix . "wx_message";
+        $sql = 'SELECT * FROM ' . $message_table . ' ORDER BY id DESC';
+        $results = $wpdb->get_results($sql, ARRAY_A);
+        foreach ($results as $r) {
+            $cacheVal[$r['keyword']] = $r;
+        }
+        wp_cache_set($cacheKey, $cacheVal);
+    }
+    if ($cacheVal && in_array($keyword, array_keys($cacheVal))) {
+        $reply = $cacheVal[$keyword];
+        switch ($reply['type']) {
+            case 'post':
+                send_post_by_ids($object, $reply['content']);
+                break;
+            default:
+                $object->sendText($reply['content']);
+                break;
+        }
+    }
 
     $matches = explode("@", $keyword);
     $key = $matches[0];

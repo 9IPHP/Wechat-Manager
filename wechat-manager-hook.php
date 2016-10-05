@@ -14,13 +14,14 @@ function wechat_manager_menu() {
     );
 
     add_submenu_page( 'wechat-manager-option', '自定义菜单 &lsaquo; 微信公众平台管家', '自定义菜单', 'manage_options', 'wechat-manager-option-setting', 'wechat_manager_optionpage_menu');
+    add_submenu_page( 'wechat-manager-option', '自定义回复 &lsaquo; 微信公众平台管家', '自定义回复', 'manage_options', 'wechat-manager-reply-setting', 'wechat_manager_optionpage_reply');
 }
 
 register_activation_hook( WECHAT_MANAGER_PLUGIN_FILE, 'wechat_manager_install' );
 
 function wechat_manager_install () {
     global $wpdb;
-    $wechat_manager_db_version = "2.0";
+    $wechat_manager_db_version = "2.1";
 
 
     $installed_ver = get_option('wechat_manager_db_version');
@@ -29,6 +30,7 @@ function wechat_manager_install () {
 
     $user_table = $wpdb->prefix . "wx_user";
     $menu_table = $wpdb->prefix . "wx_menu";
+    $message_table = $wpdb->prefix . "wx_message";
     if($wpdb->get_var("show tables like ".$user_table) != $user_table) {
         $sql = "CREATE TABLE IF NOT EXISTS `".$user_table."` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -76,6 +78,17 @@ function wechat_manager_install () {
             dbDelta($sql);
             update_option("wechat_manager_db_version", $wechat_manager_db_version);
         }*/
+    }
+    if($wpdb->get_var("show tables like ".$message_table) != $message_table) {
+        $sql = "CREATE TABLE IF NOT EXISTS `".$message_table."` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `keyword` varchar(30) NOT NULL DEFAULT '' COMMENT '关键词',
+                `type` varchar(10) NOT NULL DEFAULT '' COMMENT '类型',
+                `content` text NOT NULL COMMENT '内容',
+                PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+        dbDelta($sql);
+        add_option("wechat_manager_db_version", $wechat_manager_db_version);
     }
 }
 ?>
