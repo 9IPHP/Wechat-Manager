@@ -118,7 +118,7 @@ function switchFunc(WeChat $object, $keyword){
                 send_post_by_ids($object, $reply['content']);
                 break;
             default:
-                $object->sendText($reply['content']);
+                $object->sendText(stripslashes($reply['content']));
                 break;
         }
     }
