@@ -675,7 +675,7 @@ function wp_custom_reply_add ($id = '') {
                     <th scope="row"><label for="key">值</label></th>
                     <td>
                         <textarea name="content" id="content" class="type-text regular-text" cols='46' rows='6'><?php echo $reply ? $reply->content : '';?></textarea>
-                        <p class="description">若类型为文章，则填写文章的ID，多个ID直接以英文逗号分隔；<br>若为图片，填写图片链接即可；<br>若为文本直接填写即可。</p>
+                        <p class="description">若类型为文章，则填写文章的ID，多个ID直接以英文逗号分隔；<br>若为文本直接填写即可。</p>
                     </td>
                 </tr>
             </tbody>
