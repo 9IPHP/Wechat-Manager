@@ -80,8 +80,9 @@ class WeChat{
 
 		//如果不是验证请求，则
 		//首先，取得POST原始数据(XML格式)
-		$postData = $GLOBALS["HTTP_RAW_POST_DATA"];
-		if (empty($postData)) return;  //如果没有POST数据，则退出
+		//$postData = $GLOBALS["HTTP_RAW_POST_DATA"];
+                $postData = file_get_contents('php://input');
+		if (empty($postData)) {echo '';return;}  //如果没有POST数据，则退出
 
 		//如果验证签名不通过则退出 (debug状态下不验证)
 		/*if (!$debug)

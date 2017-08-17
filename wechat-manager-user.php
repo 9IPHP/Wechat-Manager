@@ -34,7 +34,7 @@ class User {
 		} else {
 			//如果不存在，则插入数据库
 			$data = array(
-				"openid" => mysql_real_escape_string($this->openId),
+				"openid" => $this->openId,
 				"jointime" => $time,
 				"logintime" => $time,
 				"subscribe" => 1,
