@@ -136,7 +136,8 @@ function send_post($object, $type='', $value='')
 {
 	$articles = wm_query_posts($type, $value);
 	if (empty($articles)) {
-		$object->sendText("暂无相关文章");
+        $no_post = wm_get_setting('no_post') ?: '暂无相关文章';
+		$object->sendText($no_post);
 	}
     foreach($articles as $v){
         $object->addNews($v['0'],$v['1'],$v['2'],$v['3']);
@@ -187,7 +188,8 @@ function send_post_by_ids($object, $ids)
 {
     $articles = wm_query_posts_by_ids($ids);
     if (empty($articles)) {
-        $object->sendText("暂无相关文章");
+        $no_post = wm_get_setting('no_post') ?: '暂无相关文章';
+        $object->sendText($no_post);
     }
     foreach($articles as $v){
         $object->addNews($v['0'],$v['1'],$v['2'],$v['3']);
