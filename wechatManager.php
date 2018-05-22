@@ -84,10 +84,9 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
                 case "h":
                 case "?":
                 case "？":
-                    $object->sendText(wm_get_setting('welcome'));
-                    // $object->addNews('帮助信息',"","","");
-                    // $object->addNews(wm_get_setting('welcome'),"","","");
-                    // $object->sendNews();
+                    $object->addNews('帮助信息',"","","");
+                    $object->addNews(wm_get_setting('welcome'),"","","");
+                    $object->sendNews();
                     break;
                 default:
                     switchFunc($object, $keyword);
