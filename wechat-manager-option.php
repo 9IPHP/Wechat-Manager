@@ -14,10 +14,14 @@ function wm_options_validate( $input ) {
     return $input;
 }
 
-/** custom message **/
+/**
+* custom message
+* @param $msg
+*/
 function wm_topbarmessage($msg) {
      echo '<div class="updated fade" id="message"><p>' . $msg . '</p></div>';
 }
+
 function wechat_manager_optionpage(){
     $default = array(
         'welcome' => "欢迎关注！\n输入 n 返回最新文章！\n输入 r 返回随机文章！\n输入 c7 返回一周内最多评论文章！\n输入 c30 返回一月内最多评论文章！\n输入 c365 返回一年内最多评论文章！\n输入 c 返回所有文章中最多评论文章！\n搜索文章直接输入搜索词即可！\n输入 help 或 ? 获取帮助信息！",

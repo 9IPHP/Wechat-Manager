@@ -10,28 +10,35 @@ Author URI: http://9iphp.com
 
 $siteurl = get_option('siteurl');
 define('WECHAT_MANAGER_FOLDER', dirname(plugin_basename(__FILE__)));
-define('WECHAT_MANAGER_STATIC', $siteurl.'/wp-content/plugins/' . WECHAT_MANAGER_FOLDER);
+define('WECHAT_MANAGER_STATIC', $siteurl . '/wp-content/plugins/' . WECHAT_MANAGER_FOLDER);
 define('WECHAT_MANAGER_PLUGIN_URL', plugins_url('', __FILE__));
-define('WECHAT_MANAGER_PLUGIN_DIR', WP_PLUGIN_DIR.'/'. dirname(plugin_basename(__FILE__)));
-define('WECHAT_MANAGER_PLUGIN_FILE',  __FILE__);
+define('WECHAT_MANAGER_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)));
+define('WECHAT_MANAGER_PLUGIN_FILE', __FILE__);
 
-include(WECHAT_MANAGER_PLUGIN_DIR.'/wechat-manager-class.php');             // 微信类库
-include(WECHAT_MANAGER_PLUGIN_DIR.'/wechat-manager-functions.php');         //函数库
-include(WECHAT_MANAGER_PLUGIN_DIR.'/wechat-manager-hook.php');          //
-include(WECHAT_MANAGER_PLUGIN_DIR.'/wechat-manager-user.php');
-include(WECHAT_MANAGER_PLUGIN_DIR.'/wechat-manager-option.php');
+include(WECHAT_MANAGER_PLUGIN_DIR . '/wechat-manager-class.php');             // 微信类库
+include(WECHAT_MANAGER_PLUGIN_DIR . '/wechat-manager-functions.php');         //函数库
+include(WECHAT_MANAGER_PLUGIN_DIR . '/wechat-manager-hook.php');          //
+include(WECHAT_MANAGER_PLUGIN_DIR . '/wechat-manager-user.php');
+include(WECHAT_MANAGER_PLUGIN_DIR . '/wechat-manager-option.php');
 
-define("TOKEN",wm_get_setting('token'));  //TOKEN值
-define("POSTNUM",wm_get_setting('post_num'));  //TOKEN值
+define("TOKEN", wm_get_setting('token'));  //TOKEN值
+define("POSTNUM", wm_get_setting('post_num'));  //TOKEN值
+
 $wm_thumb = wm_get_setting('thumb');
 $wm_bdak = wm_get_setting('bd_key');
 $wm_translate_appid = wm_get_setting('trans_appid');
 $wm_translate_key = wm_get_setting('trans_key');
 
 add_action('pre_get_posts', 'wm_preprocess', 4);
-function wm_preprocess($wp_query){
+/**
+ * 预处理函数
+ *
+ * @param $wp_query
+ */
+function wm_preprocess($wp_query)
+{
     global $object;
-    if(!isset($object)){
+    if (!isset($object)) {
         //创建一个WeChat类的实例, 回调函数名称为"onMessage",即消息处理函数
         $object = new WeChat(TOKEN, "onMessage");
         $object->process();  //处理消息
@@ -39,16 +46,25 @@ function wm_preprocess($wp_query){
     }
 }
 
-//消息处理函数
-function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
+/**
+ * 消息处理函数
+ *
+ * @param WeChat $object
+ * @param string $messageType
+ * @param string $content
+ * @param string $arg1
+ * @param string $arg2
+ */
+function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2)
+{
     $user = new User($object->fromUser);  //创建一个用户
 
     //处理subscribe和unsubscribe消息
     switch ($messageType) {
         case "subscribe":   //当用户关注
             global $wm_welcome;
-            $object->addNews('感谢关注',"","","");
-            $object->addNews(wm_get_setting('welcome'),"","","");
+            $object->addNews('感谢关注', "", "", "");
+            $object->addNews(wm_get_setting('welcome'), "", "", "");
             $object->sendNews();
             break;
         case "unsubscribe": //当用户取消关注
@@ -57,7 +73,7 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
         case "text":
             $keyword = strtolower(trim($content));
 
-            switch($keyword){
+            switch ($keyword) {
                 case wm_get_setting('post_new'):
                     send_post($object, 'n');
                     break;
@@ -77,7 +93,7 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
                     send_post($object, 'r');
                     break;
                 case wm_get_setting('card'):
-                    $object->addNews('微信贺卡',"定制自己的贺卡发送给亲朋好友\n\n点击图文开始制作吧!","http://9iphp.com/card/",WECHAT_MANAGER_STATIC."/include/weixin-card.jpg");
+                    $object->addNews('微信贺卡', "定制自己的贺卡发送给亲朋好友\n\n点击图文开始制作吧!", "http://9iphp.com/card/", WECHAT_MANAGER_STATIC . "/include/weixin-card.jpg");
                     $object->sendNews();
                     break;
                 case "help":
@@ -99,7 +115,14 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2) {
     }
 }
 
-function switchFunc(WeChat $object, $keyword){
+/**
+ * 自定义回复
+ *
+ * @param WeChat $object
+ * @param string $keyword
+ */
+function switchFunc(WeChat $object, $keyword)
+{
     global $wpdb;
     //关键词回复
     $cacheKey = 'wechat-manager-custom-reply-key';
@@ -127,18 +150,18 @@ function switchFunc(WeChat $object, $keyword){
     $matches = explode("@", $keyword);
     $key = $matches[0];
     $value = $matches[1];
-    switch($key){
+    switch ($key) {
         case "翻译":
             $content = wm_translate($value);
             $object->sendText($content);
             break;
         case "天气":
             $content = wm_weather($value);
-            if(!is_array($content)){
+            if (!is_array($content)) {
                 $object->sendText($content);
-            }else{
-                foreach($content as $v){
-                    $object->addNews($v['title'],"","",$v['pic']);
+            } else {
+                foreach ($content as $v) {
+                    $object->addNews($v['title'], "", "", $v['pic']);
                 }
                 $object->sendNews();
             }
